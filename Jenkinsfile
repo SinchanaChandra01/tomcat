@@ -11,8 +11,8 @@ pipeline {
             steps {
                 sshagent(['ubuntu-ssh-key']) {
                     sh '''
-                        scp -o StrictHostKeyChecking=no sample.war ec2-user@172.31.45.119:/home/ec2-user/tomcat/webapps/
-                        scp -o StrictHostKeyChecking=no sample.war ubuntu@172.31.46.100:/opt/tomcat/tomcat10/webapps
+                        scp -o StrictHostKeyChecking=no sample.war ubuntu@3.110.187.21:/home/ubuntu/tomcat/webapps/
+                        scp -o StrictHostKeyChecking=no sample.war ubuntu@43.204.24.249:/opt/tomcat/tomcat10/webapps
                     '''
                 }
             }
@@ -22,10 +22,10 @@ pipeline {
                 // Verify Tomcat servers are responding
                 sh '''
                     echo "Checking Tomcat server 1..."
-                    curl -f http://172.31.45.119:8080/sample/ || exit 1
+                    curl -f http://3.110.187.21:8080/sample/ || exit 1
 
                     echo "Checking Tomcat server 2..."
-                    curl -f http://172.31.46.100:8080/sample/ || exit 1
+                    curl -f http://43.204.24.249:8080/sample/ || exit 1
                 '''
             }
         }
