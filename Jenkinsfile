@@ -8,19 +8,16 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                sshagent(['ubuntu--ssh-key']) {
-                    sh '''
-                        # Copy WAR to home directory
-                        scp -o StrictHostKeyChecking=no sample.war ubuntu@13.233.45.247:/home/ubuntu/
-
-                        # Move WAR into Tomcat webapps with sudo
-                        ssh -o StrictHostKeyChecking=no ubuntu@13.233.45.247 "sudo mv /home/ubuntu/sample.war /opt/tomcat/tomcat10/webapps/"
-                    '''
-                }
-            }
+        sstage('Deploy') {
+    steps {
+        sshagent(['ubuntu-user']) {
+            sh '''
+              scp -o StrictHostKeyChecking=no sample.war ubuntu@13.233.45.247:/home/ubuntu/
+              ssh -o StrictHostKeyChecking=no ubuntu@13.233.45.247 "sudo mv /home/ubuntu/sample.war /opt/tomcat/tomcat10/webapps/ && sudo systemctl restart tomcat"
+            '''
         }
+    }
+}
 
         stage('Test') {
             steps {
