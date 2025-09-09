@@ -8,7 +8,7 @@ pipeline {
             }
         }
 
-        sstage('Deploy') {
+        stage('Deploy') {
     steps {
         sshagent(['ubuntu-user']) {
             sh '''
