@@ -10,7 +10,7 @@ pipeline {
 
         stage('Deploy') {
     steps {
-        sshagent(['ubuntu-user']) {
+        sshagent(['ubuntu--ssh-key']) {
             sh '''
               scp -o StrictHostKeyChecking=no sample.war ubuntu@13.233.45.247:/home/ubuntu/
               ssh -o StrictHostKeyChecking=no ubuntu@13.233.45.247 "sudo mv /home/ubuntu/sample.war /opt/tomcat/tomcat10/webapps/ && sudo systemctl restart tomcat"
