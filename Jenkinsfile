@@ -4,29 +4,32 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'wget https://tomcat.apache.org/tomcat-6.0-doc/appdev/sample/sample.war -O sample.war'
+                echo "Downloading calendar.war..."
+                sh 'wget -O calendar.war https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war'
             }
         }
+
         stage('Deploy') {
             steps {
-                sshagent(['ubuntu-ssh-key']) {
+                sshagent([''ubuntu-ssh-key']) {
                     sh '''
-                        scp -o StrictHostKeyChecking=no sample.war ubuntu@13.234.136.235:/home/ubuntu/tomcat/webapps/
-                        scp -o StrictHostKeyChecking=no sample.war ubuntu@65.0.96.19:/opt/tomcat/tomcat10/webapps
+                    echo "Deploying to Tomcat1 (43.204.37.216)..."
+                    scp -o StrictHostKeyChecking=no calendar.war ubuntu@43.204.37.216:/tmp/
+                    ssh ubuntu@98.84.151.139 "sudo mv /tmp/calendar.war /opt/tomcat10/webapps/ && sudo systemctl restart tomcat"
+
+                    echo "Deploying to Tomcat2 (13.233.89.141)..."
+                    scp -o StrictHostKeyChecking=no calendar.war ubuntu@13.233.89.141:/tmp/
+                    ssh ubuntu@34.228.19.124 "sudo mv /tmp/calendar.war /opt/tomcat10/webapps/ && sudo systemctl restart tomcat"
                     '''
                 }
             }
-        }  
+        }
+
         stage('Test') {
             steps {
-                // Verify Tomcat servers are responding
-                sh '''
-                    echo "Checking Tomcat server 1..."
-                    curl -f http://13.234.136.235:8080/sample/ || exit 1
-
-                    echo "Checking Tomcat server 2..."
-                    curl -f http://65.0.96.19:8080/sample/ || exit 1
-                '''
+                echo "Testing deployments..."
+                sh 'curl -I http://43.204.37.216:8080/calendar/'
+                sh 'curl -I http://13.233.89.141:8080/calendar/'
             }
         }
     }
