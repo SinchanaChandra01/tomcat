@@ -11,7 +11,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent([''ubuntu-ssh-key']) {
+                sshagent(['tomcat-key']) {
                     sh '''
                     echo "Deploying to Tomcat1 (43.204.37.216)..."
                     scp -o StrictHostKeyChecking=no calendar.war ubuntu@43.204.37.216:/tmp/
