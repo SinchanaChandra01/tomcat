@@ -11,7 +11,7 @@ pipeline {
             steps {
                 sshagent(['ubuntu--ssh-key']) {
                     sh '''
-                        scp -o StrictHostKeyChecking=no sample.war ec2-user@13.233.45.247:/opt/tomcat/tomcat10/webapps
+                        scp -o StrictHostKeyChecking=no sample.war ubuntu@13.233.45.247:/opt/tomcat/tomcat10/webapps
                         scp -o StrictHostKeyChecking=no sample.war ubuntu@3.111.23.218:/opt/tomcat/tomcat10/webapps
                     '''
                 }
