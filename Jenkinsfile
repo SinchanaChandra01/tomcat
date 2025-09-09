@@ -7,22 +7,28 @@ pipeline {
                 sh 'wget https://tomcat.apache.org/tomcat-6.0-doc/appdev/sample/sample.war -O sample.war'
             }
         }
-
         stage('Deploy') {
-    steps {
-        sshagent(['ubuntu--ssh-key']) {
-            sh '''
-              scp -o StrictHostKeyChecking=no sample.war ubuntu@13.233.45.247:/home/ubuntu/
-              ssh -o StrictHostKeyChecking=no ubuntu@13.233.45.247 "sudo mv /home/ubuntu/sample.war /opt/tomcat/tomcat10/webapps/ && sudo systemctl restart tomcat"
-            '''
-        }
-    }
-}
-
+            steps {
+                sshagent(['ubuntu--ssh-key']) {
+                    sh '''
+                        scp -o StrictHostKeyChecking=no sample.war ec2-user@13.233.45.247:/opt/tomcat/tomcat10/webapps
+                        scp -o StrictHostKeyChecking=no sample.war ubuntu@3.111.23.218:/opt/tomcat/tomcat10/webapps
+                    '''
+                }
+            }
+        }  
         stage('Test') {
             steps {
-                sh 'curl -I http://13.233.45.247:8080/sample/'
+                // Verify Tomcat servers are responding
+                sh '''
+                    echo "Checking Tomcat server 1..."
+                    curl -f http://13.233.45.247:8080/sample/ || exit 1
+
+                    echo "Checking Tomcat server 2..."
+                    curl -f http://3.111.23.218:8080/sample/ || exit 1
+                '''
             }
         }
     }
 }
+
