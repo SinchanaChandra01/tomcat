@@ -8,16 +8,13 @@ pipeline {
             }
         }
         stage('Deploy') {
-            steps {
-                sshagent(['ubuntu--ssh-key']) {
-                    sh '''
-                        scp -o StrictHostKeyChecking=no sample.war ubuntu@13.233.45.247:/opt/tomcat/tomcat10/webapps
-
-                        scp -o StrictHostKeyChecking=no sample.war ubuntu@3.111.23.218:/opt/tomcat/tomcat10/webapps
-                    '''
-                }
-            }
-        }  
+    sshagent(['ubuntu-user']) {
+        sh '''
+          scp -o StrictHostKeyChecking=no sample.war ubuntu@13.233.45.247:/home/ubuntu/
+          ssh -o StrictHostKeyChecking=no ubuntu@13.233.45.247 "sudo mv /home/ubuntu/sample.war /opt/tomcat/tomcat10/webapps/"
+        '''
+    }
+}
         stage('Test') {
             steps {
                 // Verify Tomcat servers are responding
