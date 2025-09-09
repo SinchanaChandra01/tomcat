@@ -10,7 +10,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['ubuntu-user']) {
+                sshagent(['ubuntu--ssh-key']) {
                     sh '''
                         # Copy WAR to home directory
                         scp -o StrictHostKeyChecking=no sample.war ubuntu@13.233.45.247:/home/ubuntu/
